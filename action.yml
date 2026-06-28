@@ -1,9 +1,9 @@
 name: "CIGate eval gate"
 description: >
-  Run CIGate over a sampled golden set, statistically correct the LLM-judge score, and
-  compare per failure-mode axis against the committed baseline. Emits a markdown report
-  and a `regressed` output. (Comment-posting and the merge-blocking decision are left to
-  the calling workflow for composability and fork safety.)
+  Eval-gated CI/CD for AI products. Runs CIGate over a sampled golden set, statistically
+  corrects the LLM-judge score, and compares per failure-mode axis against the committed
+  baseline. Emits a markdown report and a `regressed` output. (Comment-posting and the
+  merge-blocking decision are left to the calling workflow for composability and fork safety.)
 
 branding:
   icon: "check-circle"
@@ -20,8 +20,14 @@ inputs:
     description: "Evaluate the full golden set instead of a sample"
     default: "false"
   anthropic-api-key:
-    description: "Anthropic API key. If empty, the gate runs in deterministic mock mode ($0)."
+    description: "Anthropic API key. If empty (and no OpenAI key), the gate runs in deterministic mock mode ($0)."
     default: ""
+  openai-api-key:
+    description: "OpenAI API key (optional; for OpenAI-backed generator/judge)."
+    default: ""
+  editable:
+    description: "Install the local checkout (-e .) instead of the published 'cigate' from PyPI. Set 'true' only when gating CIGate's own repo."
+    default: "false"
   python-version:
     default: "3.12"
 
@@ -46,19 +52,24 @@ runs:
     - name: Install CIGate
       shell: bash
       run: |
-        if [ -n "${{ inputs.anthropic-api-key }}" ]; then
-          pip install -e ".[real]"
+        EXTRA=""
+        if [ -n "${{ inputs.anthropic-api-key }}" ] || [ -n "${{ inputs.openai-api-key }}" ]; then
+          EXTRA="[real]"
+        fi
+        if [ "${{ inputs.editable }}" = "true" ]; then
+          pip install -e ".${EXTRA}"        # gating CIGate's own repo (test local changes)
         else
-          pip install -e .
+          pip install "cigate${EXTRA}"      # external consumers: install from PyPI
         fi
 
     - name: Run gate
       shell: bash
       env:
         ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        OPENAI_API_KEY: ${{ inputs.openai-api-key }}
       run: |
         # No key -> deterministic mock mode (free; used by forks and by this repo's own CI).
-        if [ -z "${ANTHROPIC_API_KEY}" ]; then export CIGATE_MOCK=1; fi
+        if [ -z "${ANTHROPIC_API_KEY}" ] && [ -z "${OPENAI_API_KEY}" ]; then export CIGATE_MOCK=1; fi
         FULL=""
         if [ "${{ inputs.full }}" = "true" ]; then FULL="--full"; fi
         cigate gate \

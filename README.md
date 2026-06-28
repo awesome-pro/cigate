@@ -161,7 +161,7 @@ gate: { tolerance: 0.02, confidence_level: 0.95 }
 Then drop the GitHub Action into your pipeline (see [`.github/`](.github/)):
 
 ```yaml
-- uses: awesome-pro/cigate/.github/actions/eval-gate@v0.1
+- uses: awesome-pro/cigate@v0.1
   with:
     config: evalconfig.yaml
     anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}   # omit -> $0 mock mode

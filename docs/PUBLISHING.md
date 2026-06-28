@@ -106,11 +106,12 @@ gh release create v0.1.0 --title "CIGate 0.1.0" --generate-notes
 
 ## 6. List the composite Action on the GitHub Marketplace
 
-The composite action lives at `.github/actions/eval-gate` and is consumed as
-`awesome-pro/cigate/.github/actions/eval-gate@v0.1`.
+The composite action lives at the **repo root** (`action.yml`) and is consumed as
+`awesome-pro/cigate@v0.1`.
 
-- [ ] Ensure `.github/actions/eval-gate/action.yml` has `name`, `description`, and a
-      `branding` block (icon + color) — required for Marketplace.
+- [ ] `action.yml` is at the repo root with `name`, `description`, and a `branding` block
+      (icon + color) — **required** for the Marketplace checkbox to appear. The checkbox
+      only shows on a release whose tag *contains* the root `action.yml`.
 - [ ] Create a tag the Action ref points to: `git tag v0.1 && git push origin v0.1`
       (and re-point it on each release so `@v0.1` stays current).
 - [ ] On the release page, check **Publish this Action to the GitHub Marketplace**, accept
@@ -118,7 +119,7 @@ The composite action lives at `.github/actions/eval-gate` and is consumed as
       *Code quality*).
 - [ ] Confirm the README usage snippet matches the published ref:
       ```yaml
-      - uses: awesome-pro/cigate/.github/actions/eval-gate@v0.1
+      - uses: awesome-pro/cigate@v0.1
         with:
           config: evalconfig.yaml
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}   # omit -> $0 mock mode

@@ -33,11 +33,13 @@ jobs:
           echo "baseline:"; cat .cigate/baseline.json | head -c 400; echo
 
       - id: gate
-        uses: ./.github/actions/eval-gate
+        uses: ./
         with:
           config: evalconfig.yaml
           baseline-path: .cigate/baseline.json
           anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          editable: "true"
 
       - name: Post per-axis comment
         if: always()
