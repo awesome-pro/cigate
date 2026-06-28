@@ -1,0 +1,45 @@
+# CIGate configuration — REAL public-dataset track (CUAD).
+# Mirrors evalconfig.yaml but points at the CUAD-derived corpus / golden set /
+# calibration set produced by `python -m cigate.datasets.cuad_adapter`.
+# The calibration labels come from CUAD's expert clause annotations, so in REAL mode
+# the LLM judge is calibrated against genuine human expert labels.
+
+sut: "refbot.pipeline:rag_answer"          # module.path:callable -> SUTOutput
+goldenset: "goldensets/cuad_real.yaml"
+calibration_set: "goldensets/cuad_calibration.yaml"
+corpus: "goldensets/corpus_cuad"           # CUAD contracts the retriever indexes
+
+axes: [hallucination, retrieval_miss, citation_error, refusal, format_violation]
+
+sampling:
+  fraction: 0.20            # per-PR sample of the golden set (cost control)
+  stratify: true            # every axis represented in the sample
+  min_per_axis: 1
+  seed: 7
+
+gate:
+  tolerance: 0.02           # allowed drop in corrected lower bound vs baseline
+  confidence_level: 0.95
+  multiple_comparison: bonferroni   # bonferroni | bh | none
+  min_calibration_per_class: 20
+
+budget:
+  max_usd_per_run: 40
+  monthly_ceiling_usd: 5000
+
+judge:
+  model: claude-sonnet-4-6
+  # Per-axis mock confusion matrix (sensitivity, specificity) — used only in mock mode
+  # so the statistical-correction layer has real, known bias to correct. In REAL mode
+  # these are measured against the CUAD expert-derived calibration set instead.
+  confusion:
+    hallucination: [0.92, 0.88]
+    retrieval_miss: [0.92, 0.88]
+    citation_error: [0.95, 0.93]
+    refusal: [0.91, 0.92]
+    format_violation: [0.99, 0.99]
+
+generator:
+  model: claude-opus-4-8
+
+baseline_path: ".cigate/baseline_cuad.json"
