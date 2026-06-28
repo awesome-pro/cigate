@@ -89,16 +89,19 @@ def cmd_report(args) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="cigate", description="Eval-gated CI/CD for AI products.")
-    p.add_argument("--config", default="evalconfig.yaml")
+    # --config is shared by all subcommands (usable after the subcommand, e.g.
+    # `cigate gate --config evalconfig_cuad.yaml`).
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--config", default="evalconfig.yaml")
     sub = p.add_subparsers(dest="cmd", required=True)
 
-    pr = sub.add_parser("run", help="evaluate the SUT over a sampled golden set")
+    pr = sub.add_parser("run", parents=[common], help="evaluate the SUT over a sampled golden set")
     pr.add_argument("--fraction", type=float, default=None)
     pr.add_argument("--seed", type=int, default=None)
     pr.add_argument("--out", default="results.json")
     pr.set_defaults(func=cmd_run)
 
-    pg = sub.add_parser("gate", help="evaluate + compare to baseline")
+    pg = sub.add_parser("gate", parents=[common], help="evaluate + compare to baseline")
     pg.add_argument("--fraction", type=float, default=None)
     pg.add_argument("--seed", type=int, default=None)
     pg.add_argument("--full", action="store_true", help="evaluate the full golden set")
@@ -108,19 +111,19 @@ def main(argv: list[str] | None = None) -> int:
     pg.add_argument("--fail-on-regression", action="store_true")
     pg.set_defaults(func=cmd_gate)
 
-    pb = sub.add_parser("baseline", help="promote a full run to the baseline")
+    pb = sub.add_parser("baseline", parents=[common], help="promote a full run to the baseline")
     pb.add_argument("--promote", action="store_true")
     pb.add_argument("--seed", type=int, default=None)
     pb.add_argument("--out", default=None)
     pb.set_defaults(func=cmd_baseline)
 
-    pc = sub.add_parser("calibrate", help="measure judge TPR/TNR + Cohen's kappa")
+    pc = sub.add_parser("calibrate", parents=[common], help="measure judge TPR/TNR + Cohen's kappa")
     pc.add_argument("--out", default="calibration.json")
     pc.add_argument("--perturb-judge", action="store_true",
                     help="simulate judge drift to demonstrate detection")
     pc.set_defaults(func=cmd_calibrate)
 
-    prp = sub.add_parser("report", help="generate reports (auditor pack)")
+    prp = sub.add_parser("report", parents=[common], help="generate reports (auditor pack)")
     prp.add_argument("--auditor", action="store_true", help="generate the auditor pack")
     prp.add_argument("--out", default="auditor_pack.md")
     prp.set_defaults(func=cmd_report)
