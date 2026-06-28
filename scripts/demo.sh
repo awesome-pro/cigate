@@ -10,7 +10,7 @@ PROMPTS="src/refbot/prompts/__init__.py"
 echo "==> Demo PR #1: regression (answer_v1 -> answer_v2)"
 git checkout -b demo/regression "$DEFAULT_BRANCH"
 # Flip the active prompt to the regressed variant.
-python - <<'PY'
+python3 - <<'PY'
 import re, pathlib
 p = pathlib.Path("src/refbot/prompts/__init__.py")
 s = p.read_text().replace('ACTIVE_PROMPT = "answer_v1"', 'ACTIVE_PROMPT = "answer_v2"')
@@ -27,7 +27,7 @@ gh pr create --fill --title "Make the support bot friendlier (answer_v2)" \
 echo "==> Demo PR #2: safe change (no quality impact)"
 git checkout -b demo/safe-change "$DEFAULT_BRANCH"
 # A benign wording tweak that keeps answer_v1 active.
-python - <<'PY'
+python3 - <<'PY'
 import pathlib
 p = pathlib.Path("src/refbot/prompts/answer_v1.py")
 s = p.read_text().replace("You are a contract & insurance support assistant.",
