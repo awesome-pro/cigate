@@ -68,29 +68,25 @@ authenticated, baseline committed on `main`.
 
 ---
 
-## 4. Build + publish to PyPI as `cigate`
+## 4. Publish to PyPI as `cigate` (Trusted Publishing — no tokens)
 
-Uses the standard `build` + `twine` flow (the build backend is hatchling).
+PyPI Trusted Publishing (OIDC) is wired: the `.github/workflows/pypi.yml` workflow
+publishes from the `pypi` environment with `id-token: write` — no API token is stored
+anywhere. It runs the tests, builds the wheel+sdist, and uploads on every GitHub Release.
 
-```bash
-python -m pip install --upgrade build twine
-python -m build                      # -> dist/cigate-0.1.0-py3-none-any.whl + .tar.gz
-python -m twine check dist/*
-```
-
-- [ ] **TestPyPI first:**
-      `python -m twine upload --repository testpypi dist/*`
-      then in a clean venv: `pip install -i https://test.pypi.org/simple/ cigate` and
-      `cigate --help`.
-- [ ] **Real PyPI:**
-      `python -m twine upload dist/*`
+- [ ] In GitHub: **Settings → Environments → New environment → `pypi`** (must match the
+      pending publisher; optionally add a required reviewer for release protection).
+- [ ] On PyPI the pending publisher for `cigate` (repo `awesome-pro/cigate`, workflow
+      `pypi.yml`, environment `pypi`) is already configured — the first publish activates it.
+- [ ] Publishing is triggered by creating a GitHub Release (step 5); watch the `pypi`
+      workflow run go green.
 - [ ] Verify in a fresh venv: `pip install cigate` → `python -c "import cigate"` →
       `cigate --help`.
-- [ ] Note the extras for the project page: `cigate[real]` (Claude),
-      `cigate[dashboard]` (Streamlit), `cigate[crosscheck]` (judgy), `cigate[dev]`.
+- [ ] Extras for the project page: `cigate[real]` (Claude), `cigate[dashboard]`
+      (Streamlit), `cigate[crosscheck]` (judgy), `cigate[dev]`.
 
-> Use a scoped PyPI API token (`twine upload -u __token__ -p pypi-…`), or configure
-> Trusted Publishing from GitHub Actions if you prefer tokenless releases.
+> Token fallback (only if you ever bypass CI): `python -m build && twine upload dist/*`
+> with a scoped `__token__`. Trusted Publishing is preferred and already set up.
 
 ---
 

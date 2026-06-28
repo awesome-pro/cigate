@@ -7,7 +7,8 @@
 *Eval-gated CI/CD for AI products: block a merge when answer quality statistically
 regresses — per failure-mode, with the LLM-judge's bias corrected for, under a cost budget.*
 
-[![ci](https://img.shields.io/badge/tests-passing-brightgreen)](.github/workflows/ci.yml)
+[![ci](https://github.com/awesome-pro/cigate/actions/workflows/ci.yml/badge.svg)](https://github.com/awesome-pro/cigate/actions/workflows/ci.yml)
+[![pypi](https://img.shields.io/pypi/v/cigate)](https://pypi.org/project/cigate/)
 [![python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![runs offline](https://img.shields.io/badge/runs-%240%20offline-success)](#try-it-in-60-seconds-0-offline)

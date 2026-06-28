@@ -5,6 +5,10 @@ description: >
   and a `regressed` output. (Comment-posting and the merge-blocking decision are left to
   the calling workflow for composability and fork safety.)
 
+branding:
+  icon: "check-circle"
+  color: "green"
+
 inputs:
   config:
     description: "Path to evalconfig.yaml"

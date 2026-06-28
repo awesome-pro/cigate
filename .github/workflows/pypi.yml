@@ -1,0 +1,42 @@
+name: pypi
+
+# Publishes `cigate` to PyPI via Trusted Publishing (OIDC) — no API token stored.
+# Matches the PyPI pending publisher: repo awesome-pro/cigate, workflow pypi.yml,
+# environment `pypi`. Triggered by publishing a GitHub Release.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,crosscheck]"
+      - run: pytest -q
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi          # must match the PyPI trusted-publisher config
+    permissions:
+      id-token: write          # required for OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build sdist + wheel
+        run: |
+          pip install build
+          python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
