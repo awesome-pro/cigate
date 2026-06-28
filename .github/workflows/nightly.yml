@@ -1,0 +1,41 @@
+name: nightly-baseline
+
+# Refreshes the committed baseline from a FULL run on main, nightly. Running the full
+# golden set nightly also catches drift a per-PR sample might miss.
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-baseline
+  cancel-in-progress: false   # never cancel a baseline write mid-flight
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then pip install -e ".[real]"; else pip install -e .; fi
+      - name: Promote full-run baseline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "${ANTHROPIC_API_KEY}" ]; then export CIGATE_MOCK=1; fi
+          cigate baseline --promote --config evalconfig.yaml
+      - name: Commit baseline if changed
+        run: |
+          git config user.name "cigate-bot"
+          git config user.email "cigate-bot@users.noreply.github.com"
+          git add .cigate/baseline.json
+          git commit -m "chore(cigate): refresh nightly baseline [skip ci]" || echo "baseline unchanged"
+          git push || echo "push skipped (protected branch? use a PAT/app token)"

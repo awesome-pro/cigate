@@ -1,0 +1,73 @@
+name: "CIGate eval gate"
+description: >
+  Run CIGate over a sampled golden set, statistically correct the LLM-judge score, and
+  compare per failure-mode axis against the committed baseline. Emits a markdown report
+  and a `regressed` output. (Comment-posting and the merge-blocking decision are left to
+  the calling workflow for composability and fork safety.)
+
+inputs:
+  config:
+    description: "Path to evalconfig.yaml"
+    default: "evalconfig.yaml"
+  baseline-path:
+    description: "Path to the baseline JSON to compare against"
+    default: ".cigate/baseline.json"
+  full:
+    description: "Evaluate the full golden set instead of a sample"
+    default: "false"
+  anthropic-api-key:
+    description: "Anthropic API key. If empty, the gate runs in deterministic mock mode ($0)."
+    default: ""
+  python-version:
+    default: "3.12"
+
+outputs:
+  regressed:
+    description: "true if any axis regressed beyond tolerance"
+    value: ${{ steps.parse.outputs.regressed }}
+  report-path:
+    description: "Path to the markdown report"
+    value: "report.md"
+  summary-path:
+    description: "Path to the JSON summary"
+    value: "summary.json"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install CIGate
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.anthropic-api-key }}" ]; then
+          pip install -e ".[real]"
+        else
+          pip install -e .
+        fi
+
+    - name: Run gate
+      shell: bash
+      env:
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+      run: |
+        # No key -> deterministic mock mode (free; used by forks and by this repo's own CI).
+        if [ -z "${ANTHROPIC_API_KEY}" ]; then export CIGATE_MOCK=1; fi
+        FULL=""
+        if [ "${{ inputs.full }}" = "true" ]; then FULL="--full"; fi
+        cigate gate \
+          --config "${{ inputs.config }}" \
+          --baseline "${{ inputs.baseline-path }}" \
+          $FULL \
+          --out-report report.md \
+          --out-summary summary.json
+
+    - name: Parse result
+      id: parse
+      shell: bash
+      run: |
+        REG=$(python -c "import json;print(str(json.load(open('summary.json'))['regressed']).lower())")
+        echo "regressed=$REG" >> "$GITHUB_OUTPUT"
+        echo "CIGate regressed=$REG"

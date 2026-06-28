@@ -1,0 +1,54 @@
+name: eval-gate
+
+# Runs on every PR. Reads the baseline from `main`, runs the gate, posts a sticky
+# per-axis comment, and BLOCKS the merge (red required check) if any axis regressed.
+# With no ANTHROPIC_API_KEY the gate runs in deterministic mock mode for $0 — which is
+# how this repo's own demo PRs go red/green at zero cost.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: eval-gate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch baseline from main
+        run: |
+          git fetch --no-tags --depth=1 origin main || true
+          mkdir -p .cigate
+          git show origin/main:.cigate/baseline.json > .cigate/baseline.json 2>/dev/null \
+            || echo '{}' > .cigate/baseline.json
+          echo "baseline:"; cat .cigate/baseline.json | head -c 400; echo
+
+      - id: gate
+        uses: ./.github/actions/eval-gate
+        with:
+          config: evalconfig.yaml
+          baseline-path: .cigate/baseline.json
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Post per-axis comment
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        continue-on-error: true   # forked PRs get a read-only token; don't fail the run
+        with:
+          header: cigate
+          path: report.md
+
+      - name: Enforce gate
+        if: steps.gate.outputs.regressed == 'true'
+        run: |
+          echo "::error title=CIGate::Quality regression detected — see the PR comment."
+          exit 1
