@@ -16,7 +16,7 @@ ANSWER_PROMPTS = {
 JUDGE_PROMPT = judge_v1.PROMPT
 
 # >>> The line the demo regression PR flips. <<<
-ACTIVE_PROMPT = "answer_v1"
+ACTIVE_PROMPT = "answer_v2"
 
 
 def get_answer_prompt(version: str | None = None) -> dict:
