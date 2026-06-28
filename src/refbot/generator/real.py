@@ -45,6 +45,8 @@ def generate(question: str, hits: list[Hit], case: Case | None = None) -> SUTOut
     usage = getattr(resp, "usage", None)
     meta = {
         "flavor": prompt.get("flavor", "good"),
+        "provider": "anthropic",
+        "model": config.gen_model(),
         "input_tokens": getattr(usage, "input_tokens", 0),
         "output_tokens": getattr(usage, "output_tokens", 0),
     }

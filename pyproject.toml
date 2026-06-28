@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-real = ["anthropic>=0.40"]          # real Claude generation + judge (mock works without this)
+real = ["anthropic>=0.40", "openai>=1.40"]   # real Claude judge + Claude/OpenAI generation
 dashboard = ["streamlit>=1.30", "pandas>=2", "altair>=5"]
 crosscheck = ["judgy>=0.1"]         # optional: cross-check our analytic CI against judgy's bootstrap
 dev = ["pytest>=8", "pytest-cov>=4", "ruff>=0.4"]

@@ -16,7 +16,17 @@ import os
 from .prompts import ACTIVE_PROMPT, get_answer_prompt
 
 GEN_MODEL_DEFAULT = "claude-opus-4-8"
+GEN_MODEL_OPENAI_DEFAULT = "gpt-4o-mini"
 SEED_DEFAULT = 7
+
+
+def gen_provider() -> str:
+    """Which provider generates answers: 'anthropic' (default) or 'openai'.
+
+    Cross-provider setup (OpenAI generates, Claude judges) avoids a model grading its own
+    output and is the more credible demo.
+    """
+    return os.environ.get("REFBOT_GEN_PROVIDER", "anthropic").lower()
 
 
 def mock_mode() -> bool:
@@ -45,7 +55,8 @@ def seed() -> int:
 
 
 def gen_model() -> str:
-    return os.environ.get("REFBOT_GEN_MODEL", GEN_MODEL_DEFAULT)
+    default = GEN_MODEL_OPENAI_DEFAULT if gen_provider() == "openai" else GEN_MODEL_DEFAULT
+    return os.environ.get("REFBOT_GEN_MODEL", default)
 
 
 def regression_rate() -> float:

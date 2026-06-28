@@ -1,129 +1,121 @@
-# CIGate — 2–3 minute demo script
+# CIGate — full demo video script (~10–12 min)
 
-A shot-by-shot script for a Loom / screen recording. Everything runs in deterministic
-**mock mode** ($0, no API key), so the demo is fully reproducible and the PR check goes
-**red then green** for free.
+A chaptered script for a proper walkthrough + demo. Records the *story* (why this matters),
+the *idea* (the statistics), and *proof* (live mock demo + a REAL cross-provider run with
+real numbers). Trim chapters for a shorter cut; the ⭐ chapters are the must-keep core.
 
-**Total runtime:** ~2:30. **Setup before you hit record:** clone the repo, `cd` in,
-create the venv, and run `pip install -e ".[dev]"` (so install latency isn't on camera).
-Have two browser tabs ready: the regression PR and the safe-change PR (created with
-`scripts/demo.sh`). Use a large terminal font.
-
----
-
-## ⏱ If you only watch one part (the 25-second highlight)
-
-> **00:55 – 01:20.** Run `BUILD_FLAVOR=regressed cigate gate`, then immediately
-> `BUILD_FLAVOR=good cigate gate`. Point at the two outputs side by side: same pipeline,
-> same cost ($0.00), but `hallucination` and `citation_error` go **REGRESSED** on the
-> first and every axis is **ok** on the second.
->
-> **Say:** "Same gate, two builds. The regression is isolated to the exact two axes the
-> prompt change hurt — and a clean build passes cleanly. That's the whole product:
-> per-axis, bias-corrected, blocks only when it's statistically sure."
-
-Pin this clip as the thumbnail / opening hook.
+> Setup before recording: `source .venv/bin/activate`; have the repo, the two GitHub PRs,
+> and `pypi.org/project/cigate` open in tabs. For Chapter 6 you'll need `.env` with both keys
+> (and ideally pre-run `scripts/real_eval.sh` so `docs/results/` is populated).
 
 ---
 
-## Beat sheet
+## 0 · Cold open (20s) ⭐
+**On screen:** the blocked PR comment (`docs/samples/pr_comment_regressed.md` or PR #1).
+**Say:** "A one-line prompt change shipped. Six months later a customer noticed answer
+quality had quietly dropped on contract questions — and a $4M renewal was gone. Nobody
+caught it, because nothing in CI was *measuring* quality. This is the tool that catches it.
+It's called CIGate."
 
-### 0:00 – 0:15 — Hook
-**On screen:** the README title block (`🚦 CIGate — Gate your CI/CD on the confidence
-interval, not the vibes`).
+## 1 · The problem (60s) ⭐
+**On screen:** README "The problem" section.
+**Say:** "Everyone shipping LLM features changes prompts, retrieval, and models constantly.
+Those changes have non-local effects: you fix one answer and silently break ten. The default
+is *vibes-based* shipping, and it produces silent quality regressions that reach production.
+We have unit tests for code. We have nothing equivalent for answer quality."
 
-**Say:** "Teams shipping AI features change a prompt, and quality silently regresses on
-one slice of traffic — no test goes red. In the case study this is built from, that drift
-cost a $4M renewal. CIGate is a merge gate that catches it."
+## 2 · Why the obvious fix doesn't work (75s) ⭐
+**On screen:** README "The gap nobody fills."
+**Say:** "The obvious fix is 'use an LLM as a judge in CI and gate on its score.' The
+problem: in-domain LLM-judge accuracy is only 75–88%. The judge is a biased measuring
+instrument. Gate on its raw score and you either over-block — false alarms, so devs ignore
+the gate — or under-block, and real regressions still ship. Promptfoo, Braintrust, Langfuse:
+they all gate on the raw, biased number."
 
-### 0:15 – 0:35 — The gap
-**On screen:** scroll to the README section "The gap nobody fills."
+## 3 · The insight (90s) ⭐
+**On screen:** `docs/METHODOLOGY.md` — the Rogan–Gladen formula.
+**Say:** "CIGate gates on the *corrected* number. We measure the judge's true-positive and
+true-negative rate on a human-labeled calibration set, then invert the bias with the
+Rogan–Gladen estimator to recover the *true* pass rate — with a confidence interval. Then
+the clever part: we don't compare a single CI to the baseline (that false-blocks on small
+samples). We run a two-sample *drop test* — block only when we're statistically confident
+the drop exceeds tolerance — per failure-mode axis, so a gain on formatting can never mask a
+regression on hallucination. That's the thesis: gate your CI/CD on a *confidence interval*,
+not the vibes."
 
-**Say:** "Promptfoo, Braintrust, Langfuse, DeepEval all gate on the raw LLM-judge score.
-But in-domain judge accuracy is only 75 to 88 percent — that number is biased. So you
-either over-block and people route around the gate, or under-block and real regressions
-ship. CIGate gates on the bias-corrected pass rate's confidence-interval lower bound — per
-failure-mode axis."
+## 4 · Architecture (75s)
+**On screen:** README mermaid diagram; scroll `src/cigate/stats.py` and `src/cigate/gate.py`.
+**Say:** "Two packages: `cigate`, the reusable gate, and `refbot`, a demo RAG support bot as
+the system-under-test. Each case is scored two ways — cheap deterministic code checks for
+citations and schema, and the LLM judge for subjective axes like hallucination. Code axes are
+unbiased, so they use an exact binomial interval; only the judge axes get bias-corrected."
 
-### 0:35 – 0:55 — Establish the baseline
+## 5 · Live demo — mock mode, $0 (120s) ⭐
 **On screen:** terminal.
-
 ```bash
-cigate baseline --promote
+pytest -q                                   # 28 passed
+cigate baseline --promote                   # establish a good baseline
+BUILD_FLAVOR=regressed cigate gate          # → BLOCKED (hallucination + citation red)
+BUILD_FLAVOR=good      cigate gate          # → PASSES
 ```
+**Say:** "Everything runs offline, deterministically, for zero dollars — that's what powers
+the test suite and CI. A regressed prompt is blocked, and the report isolates the exact two
+axes that got worse. A clean change passes."
+**Then on screen:** GitHub PR #1 (red + comment) and PR #2 (green).
+**Say:** "These are two live PRs on the repo. The gate runs on every PR in mock mode for
+free — red on the regression, green on the safe change. The red check blocks the merge."
 
-**Point at:** the line `[cigate baseline] promoted full run -> .cigate/baseline.json`.
+## 6 · Real models, real data — cross-provider (150s) ⭐⭐ (the money chapter)
+**On screen:** terminal output from `scripts/real_eval.sh` + files in `docs/results/`.
+**Say:** "Mock mode proves the mechanics. Now the real thing. The product-under-test runs on
+OpenAI GPT; the judge is Claude — so no model grades its own output."
+1. **Real judge calibration vs CUAD expert labels** — open `docs/results/cuad_calibration_real.json`.
+   "We ran the actual Claude judge over 166 real contract questions from CUAD, a dataset with
+   expert legal annotations, and measured its real bias: [read the TPR/TNR/κ]. Not simulated
+   — the judge's measured accuracy against human experts."
+2. **Real regression caught** — open `docs/results/real_regressed_report.md`.
+   "GPT answers 40 real contract questions with the good prompt, then the degraded prompt. The
+   degraded answers really are worse — and the gate, using the bias-corrected score, blocks
+   it. Total cost: [read the real $] — a few dollars."
+3. **Raw-vs-corrected contrast** — point at an axis where raw ≠ corrected.
+   "The raw judge score here would have slipped past a naive threshold — the corrected lower
+   bound is what caught it."
 
-**Say:** "First I promote a known-good full run as the committed baseline. Every PR gets
-compared against this."
-
-### 0:55 – 1:20 — The money shot (red, then green) ← highlight
-**On screen:** terminal, run both back to back.
-
+## 7 · Depth (60s)
 ```bash
-BUILD_FLAVOR=regressed cigate gate     # the bad prompt change
-BUILD_FLAVOR=good      cigate gate     # a safe change
+cigate calibrate --perturb-judge            # drift flags fire
+cigate report --auditor | head -40          # auditor pack
 ```
+**Say:** "There's an operational layer: judge-drift detection with Cohen's kappa — catch the
+judge silently degrading after a model upgrade — cost budgets with caching, and an
+auto-generated auditor pack for regulated buyers."
 
-**Point at:** in the first output, the per-axis summary lines where `hallucination` and
-`citation_error` read `REGRESSED`, and `cost=$0.00 regressed=True`. Then in the second,
-every axis reads `ok` and `regressed=False`.
-
-**Say (the highlight lines):** "Same gate, two builds, both at zero dollars. The regression
-is isolated to the exact two axes the change hurt — a single composite score would have
-hidden it. The clean build passes."
-
-### 1:20 – 1:45 — Why it's trustworthy
-**On screen:** open `report.md` (the generated PR comment) or `docs/samples/pr_comment_regressed.md`.
-
-**Point at:** the table columns — `Raw judge` vs `Corrected` vs `95% CI` vs `Baseline` vs
-`Δ`.
-
-**Say:** "Here's the PR comment it posts. Raw judge says 45% on hallucination; after
-Rogan–Gladen bias correction and the adjusted-Wald confidence interval, we're confident
-the true drop exceeds tolerance versus baseline. It's a two-sample drop test, so identical
-builds never false-block — which is what makes it safe to mark as a required check."
-
-### 1:45 – 2:10 — On a real PR
-**On screen:** switch to the browser. Show the **regression PR** with the red ❌ required
-check and the sticky CIGate comment, then the **safe-change PR** with the green ✅ check.
-
-**Say:** "And this is it running for real on GitHub. The friendly-prompt PR is blocked
-with a per-axis explanation; the cosmetic change merges. No API key needed — the demo CI
-runs in mock mode for zero dollars."
-
-### 2:10 – 2:30 — Close
-**On screen:** back to terminal.
-
+## 8 · Adopt it (45s)
+**On screen:** PyPI page; the Action snippet.
 ```bash
-pytest -q          # 26 tests, all green, $0
+pip install cigate
 ```
+```yaml
+- uses: awesome-pro/cigate@v0.1
+  with: { config: evalconfig.yaml, anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }} }
+```
+**Say:** "It's on PyPI and the GitHub Marketplace. Point it at your own bot with one line of
+config, drop the Action into your pipeline, and you have an eval gate on every PR."
 
-**Say:** "Twenty-six tests, all green, zero cost — including a cross-check of the
-confidence interval against the judgy library. Point it at your own product with one
-config file. Repo's in the description — it's MIT."
-
-**On screen:** end card with `github.com/awesome-pro/cigate`.
+## 9 · Close (20s) ⭐
+**Say:** "Silent quality regressions are the unsolved CI problem for AI products. CIGate
+solves it the statistically honest way — correct the judge's bias, gate on the confidence
+interval, per failure mode. Links to the repo, PyPI, and the writeup are below."
 
 ---
 
-## Optional B-roll (if you want a 3:00 cut)
+### ⭐ If you only post a 60-second clip
+Chapter 0 (hook) → the mock blocked PR (Ch 5) → the real regression caught + cost (Ch 6.2)
+→ one line of Chapter 3 ("gate on a confidence interval, not the vibes").
 
-- `cigate calibrate` — show the judge's measured TPR/TNR and Cohen's κ per axis.
-- `streamlit run dashboard/app.py` — the per-axis / calibration / live-gate dashboard
-  (requires `pip install -e ".[dashboard]"`).
-- `cigate report --auditor` — the generated auditor pack (methodology + metrics package).
-
-## Quick-reference: every command in this demo
-
-```bash
-pip install -e ".[dev]"               # one-time setup (do before recording)
-cigate baseline --promote             # 0:35
-BUILD_FLAVOR=regressed cigate gate    # 0:55  → blocks
-BUILD_FLAVOR=good      cigate gate    # 1:05  → passes
-pytest -q                             # 2:10  → 26 tests, $0
-# B-roll:
-cigate calibrate
-cigate report --auditor
-streamlit run dashboard/app.py
-```
+### B-roll / screenshots to capture
+- The blocked PR comment (per-axis table).
+- `stats.py` Rogan–Gladen function.
+- `docs/results/cuad_calibration_real.json` (real κ).
+- `docs/results/real_regressed_report.md` (real regression + cost).
+- Green CI badge + the PyPI page.

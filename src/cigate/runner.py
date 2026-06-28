@@ -68,6 +68,22 @@ def _detector(axis: str, code: dict[str, bool], judge: dict[str, bool]) -> bool:
     return bool(code.get(axis, True)) and bool(judge.get(axis, True))   # "both"
 
 
+def _calib_cache_key(cfg: Config, mock: bool, seed: int) -> str:
+    """Stable key for cached calibration verdicts. Invalidates when the judge identity,
+    calibration set, axes, or (mock) confusion config change."""
+    calib_content = Path(cfg.calibration_set).read_text() if Path(cfg.calibration_set).exists() else ""
+    blob = json.dumps({
+        "mock": mock,
+        "judge": "mock" if mock else cfg.judge.model,
+        "judge_prompt": None if mock else cfg.judge_prompt,
+        "seed": seed,
+        "axes": sorted(cfg.axes),
+        "confusion": {k: list(v) for k, v in cfg.judge.confusion.items()} if mock else None,
+        "calib_sha": hashlib.sha256(calib_content.encode()).hexdigest()[:16],
+    }, sort_keys=True)
+    return hashlib.sha256(blob.encode()).hexdigest()[:16]
+
+
 def run(cfg: Config, fraction: float | None = None, seed: int | None = None) -> RunResult:
     mock = cfg.mock_mode()
     seed = cfg.sampling.seed if seed is None else seed
@@ -96,8 +112,9 @@ def run(cfg: Config, fraction: float | None = None, seed: int | None = None) -> 
         code = code_based.code_verdicts(output, case, valid_ids)
         jr = judge.judge(case, output, ctx)
 
+        gen_model = output.meta.get("model", cfg.generator.model)
         gen_tokens = output.meta.get("input_tokens", 0), output.meta.get("output_tokens", 0)
-        case_cost = jr.cost_usd + cost_mod.price(cfg.generator.model, *gen_tokens)
+        case_cost = jr.cost_usd + cost_mod.price(gen_model, *gen_tokens)
         result.cost_usd += case_cost
         budget.add(case_cost)
 
@@ -110,19 +127,33 @@ def run(cfg: Config, fraction: float | None = None, seed: int | None = None) -> 
             "verdicts": verdicts, "answer": output.text[:300],
         })
 
-    # ---- calibration: measure judge/detector TPR/TNR ---------------------- #
-    for a in axes:
-        result.calib_preds[a], result.calib_truth[a] = [], []
-    for case, output in load_calibration(cfg.calibration_set):
-        ctx = _context(corpus, output.retrieved_ids)
-        code = code_based.code_verdicts(output, case, valid_ids)
-        jr = judge.judge(case, output, ctx)
-        result.cost_usd += jr.cost_usd
-        budget.add(jr.cost_usd)
+    # ---- calibration: measure judge/detector TPR/TNR (cached to bound cost) ----
+    cache_path = Path(".cigate/cache") / f"calib_{_calib_cache_key(cfg, mock, seed)}.json"
+    cached = None
+    if cache_path.exists():
+        try:
+            cached = json.loads(cache_path.read_text())
+        except Exception:
+            cached = None
+    if cached:
+        result.calib_preds = cached["preds"]
+        result.calib_truth = cached["truth"]
+    else:
         for a in axes:
-            if a in case.truth_labels:
-                result.calib_preds[a].append(int(_detector(a, code, jr.verdicts)))
-                result.calib_truth[a].append(int(bool(case.truth_labels[a])))
+            result.calib_preds[a], result.calib_truth[a] = [], []
+        for case, output in load_calibration(cfg.calibration_set):
+            ctx = _context(corpus, output.retrieved_ids)
+            code = code_based.code_verdicts(output, case, valid_ids)
+            jr = judge.judge(case, output, ctx)
+            result.cost_usd += jr.cost_usd
+            budget.add(jr.cost_usd)
+            for a in axes:
+                if a in case.truth_labels:
+                    result.calib_preds[a].append(int(_detector(a, code, jr.verdicts)))
+                    result.calib_truth[a].append(int(bool(case.truth_labels[a])))
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        cache_path.write_text(json.dumps(
+            {"preds": result.calib_preds, "truth": result.calib_truth}))
 
     result.meta = {
         "mock": mock, "fraction": fraction, "seed": seed,

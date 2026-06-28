@@ -1,0 +1,717 @@
+cases:
+- id: q0002
+  question: Can you explain the surrogacy and fertility treatment coverage on my health
+    insurance?
+  axes:
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    refusal: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: out_of_corpus
+- id: q0005
+  question: How much is the annual coverage limit under my health policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - health-coverage-limit-001
+  reference_answer: Your health policy's annual coverage limit is $300,000, with a
+    $60,000 per-occurrence sub-limit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: coverage-limit
+- id: q0009
+  question: What does my renters policy say about the drone hobbyist liability coverage?
+  axes:
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    refusal: true
+    format_violation: true
+  metadata:
+    product: renters
+    aspect: out_of_corpus
+- id: q0010
+  question: What does my health policy say about the surrogacy and fertility treatment
+    coverage?
+  axes:
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    refusal: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: out_of_corpus
+- id: q0011
+  question: Can you explain the dwelling coverage limit on my home insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - home-dwelling-coverage-limit-001
+  reference_answer: Your home policy's dwelling coverage limit is $300,000, with a
+    $75,000 per-occurrence sub-limit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: dwelling-coverage-limit
+- id: q0018
+  question: I need details about the pandemic trip-interruption coverage for my travel
+    coverage.
+  axes:
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    refusal: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: out_of_corpus
+- id: q0021
+  question: What is the home-based business inventory coverage for my renters insurance
+    policy?
+  axes:
+  - hallucination
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    hallucination: true
+    refusal: true
+    format_violation: true
+  metadata:
+    product: renters
+    aspect: out_of_corpus
+- id: q0025
+  question: I need details about the rideshare commercial-use coverage for my auto
+    coverage.
+  axes:
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    refusal: true
+    format_violation: true
+  metadata:
+    product: auto
+    aspect: out_of_corpus
+- id: q0027
+  question: What is the pandemic trip-interruption coverage for my travel insurance
+    policy?
+  axes:
+  - hallucination
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    hallucination: true
+    refusal: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: out_of_corpus
+- id: q0033
+  question: What does my home policy say about the earthquake structural collapse
+    rider?
+  axes:
+  - hallucination
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    hallucination: true
+    refusal: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: out_of_corpus
+- id: q0034
+  question: How much is the comprehensive coverage deductible under my auto policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - auto-comprehensive-deductible-001
+  reference_answer: Your auto policy's comprehensive coverage deductible is $2,000
+    per claim, with an annual aggregate cap of $8,000.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: auto
+    aspect: comprehensive-deductible
+- id: q0036
+  question: I need details about the cyber identity-theft reimbursement for my home
+    coverage.
+  axes:
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    refusal: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: out_of_corpus
+- id: q0040
+  question: What is the wedding event cancellation coverage for my travel insurance
+    policy?
+  axes:
+  - hallucination
+  - refusal
+  - format_violation
+  gold_doc_ids: []
+  reference_answer: This question is not addressed by the available policy documents;
+    a correct answer should state that the information is not covered and avoid guessing.
+  in_corpus: false
+  truth_labels:
+    hallucination: true
+    refusal: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: out_of_corpus
+- id: q0046
+  question: Could you tell me the beneficiary death claim process in my life insurance
+    plan?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-beneficiary-001
+  reference_answer: Under your life policy you must file a claim within 90 days, and
+    covered claims settle within 30 days.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: beneficiary
+- id: q0053
+  question: What is the accidental death benefit rider for my life insurance policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-accidental-death-rider-001
+  reference_answer: The accidental death benefit rider on your life policy costs $5
+    per month and adds up to $1,000 in additional benefit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: accidental-death-rider
+- id: q0070
+  question: How much is the monthly premium payment under my life policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-premium-001
+  reference_answer: Your life policy's monthly premium payment is $29 per month ($348
+    per year), with a $15 late fee after the due date.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: premium
+- id: q0079
+  question: How much is the office visit copay under my health policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - health-copay-001
+  reference_answer: Your health policy's office visit copay is $15 per office visit,
+    followed by 10% coinsurance after the deductible.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: copay
+- id: q0090
+  question: What does my home policy say about the scheduled jewelry valuables rider?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - home-scheduled-jewelry-rider-001
+  reference_answer: The scheduled jewelry valuables rider on your home policy costs
+    $8 per month and adds up to $1,000 in additional benefit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: scheduled-jewelry-rider
+- id: q0094
+  question: How much is the term renewal conditions under my life policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-term-renewal-001
+  reference_answer: 'Your life policy''s term renewal conditions: it renews for a
+    6-month term with up to a 3% rate change and 30 days'' notice.'
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: term-renewal
+- id: q0101
+  question: What is the office visit copay for my health insurance policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - health-copay-001
+  reference_answer: Your health policy's office visit copay is $15 per office visit,
+    followed by 10% coinsurance after the deductible.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: copay
+- id: q0103
+  question: Can you explain the trip premium cost on my travel insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - travel-premium-001
+  reference_answer: Your travel policy's trip premium cost is $118 per month ($1,416
+    per year), with a $15 late fee after the due date.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: premium
+- id: q0105
+  question: I need details about the baggage loss coverage limit for my travel coverage.
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - travel-baggage-limit-001
+  reference_answer: Your travel policy's baggage loss coverage limit is $500,000,
+    with a $100,000 per-occurrence sub-limit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: baggage-limit
+- id: q0109
+  question: Could you tell me the travel claims reimbursement process in my travel
+    insurance plan?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - travel-claims-process-001
+  reference_answer: Under your travel policy you must file a claim within 60 days,
+    and covered claims settle within 45 days.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: claims-process
+- id: q0112
+  question: Could you tell me the monthly premium payment in my home insurance plan?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - home-premium-001
+  reference_answer: Your home policy's monthly premium payment is $118 per month ($1,416
+    per year), with a $35 late fee after the due date.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: premium
+- id: q0125
+  question: Can you explain the replacement cost coverage limit on my home insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - home-replacement-cost-001
+  reference_answer: Your home policy's replacement cost coverage limit is $25,000,
+    with a $2,500 per-occurrence sub-limit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: replacement-cost
+- id: q0126
+  question: Can you explain the annual medical deductible on my health insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - health-deductible-001
+  reference_answer: Your health policy's annual medical deductible is $750 per claim,
+    with an annual aggregate cap of $3,750.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: deductible
+- id: q0131
+  question: What does my travel policy say about the baggage loss coverage limit?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - travel-baggage-limit-001
+  reference_answer: Your travel policy's baggage loss coverage limit is $500,000,
+    with a $100,000 per-occurrence sub-limit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: baggage-limit
+- id: q0137
+  question: I need details about the policy cancellation and surrender for my life
+    coverage.
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-cancellation-001
+  reference_answer: Your life policy's policy cancellation and surrender require 10
+    days' written notice, with a $25 fee and a pro-rated premium refund.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: cancellation
+- id: q0147
+  question: What does my home policy say about the home coverage exclusions?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - home-exclusions-001
+  reference_answer: Your home policy's home coverage exclusions include flood and
+    surface water, earth movement and earthquake, and gradual mold, which are not
+    covered.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: exclusions
+- id: q0151
+  question: I need details about the travel claims reimbursement process for my travel
+    coverage.
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - travel-claims-process-001
+  reference_answer: Under your travel policy you must file a claim within 60 days,
+    and covered claims settle within 45 days.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: claims-process
+- id: q0152
+  question: How much is the water backup sewer rider under my home policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - home-water-backup-rider-001
+  reference_answer: The water backup sewer rider on your home policy costs $12 per
+    month and adds up to $2,500 in additional benefit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: home
+    aspect: water-backup-rider
+- id: q0159
+  question: What does my travel policy say about the coverage effective waiting period?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - travel-waiting-period-001
+  reference_answer: Your travel policy's coverage effective waiting period is 180
+    days from the effective date before benefits begin.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: waiting-period
+- id: q0186
+  question: Can you explain the annual coverage limit on my health insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - health-coverage-limit-001
+  reference_answer: Your health policy's annual coverage limit is $300,000, with a
+    $60,000 per-occurrence sub-limit.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: coverage-limit
+- id: q0190
+  question: Can you explain the coverage effective waiting period on my travel insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - travel-waiting-period-001
+  reference_answer: Your travel policy's coverage effective waiting period is 180
+    days from the effective date before benefits begin.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: travel
+    aspect: waiting-period
+- id: q0193
+  question: Can you explain the beneficiary death claim process on my life insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-beneficiary-001
+  reference_answer: Under your life policy you must file a claim within 90 days, and
+    covered claims settle within 30 days.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: beneficiary
+- id: q0196
+  question: Could you tell me the annual medical deductible in my health insurance
+    plan?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - health-deductible-001
+  reference_answer: Your health policy's annual medical deductible is $750 per claim,
+    with an annual aggregate cap of $3,750.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: deductible
+- id: q0213
+  question: Can you explain the premium grace period on my life insurance?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-grace-period-001
+  reference_answer: Your life policy's premium grace period is 31 days, after which
+    a $50 reinstatement fee applies.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: grace-period
+- id: q0216
+  question: What does my life policy say about the life coverage exclusions?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - life-exclusions-001
+  reference_answer: Your life policy's life coverage exclusions include death by suicide
+    within the first two years, illegal-act fatalities, and undisclosed hazardous
+    occupations, which are not covered.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: life
+    aspect: exclusions
+- id: q0221
+  question: Could you tell me the health coverage exclusions in my health insurance
+    plan?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - health-exclusions-001
+  reference_answer: Your health policy's health coverage exclusions include cosmetic
+    procedures, experimental treatments, and self-inflicted injury, which are not
+    covered.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: health
+    aspect: exclusions
+- id: q0222
+  question: What is the accident claims process for my auto insurance policy?
+  axes:
+  - hallucination
+  - citation_error
+  - format_violation
+  gold_doc_ids:
+  - auto-claims-process-001
+  reference_answer: Under your auto policy you must file a claim within 90 days, and
+    covered claims settle within 30 days.
+  in_corpus: true
+  truth_labels:
+    hallucination: true
+    citation_error: true
+    format_violation: true
+  metadata:
+    product: auto
+    aspect: claims-process

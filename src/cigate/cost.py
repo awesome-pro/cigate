@@ -12,6 +12,11 @@ PRICING: dict[str, tuple[float, float]] = {
     "claude-opus-4-8": (5.0, 25.0),
     "claude-sonnet-4-6": (3.0, 15.0),
     "claude-haiku-4-5": (1.0, 5.0),
+    # OpenAI (for the cross-provider product-under-test)
+    "gpt-4o-mini": (0.15, 0.60),
+    "gpt-4o": (2.5, 10.0),
+    "gpt-4.1-mini": (0.40, 1.60),
+    "gpt-4.1": (2.0, 8.0),
 }
 _DEFAULT_PRICE = (3.0, 15.0)
 

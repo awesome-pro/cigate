@@ -19,5 +19,8 @@ def generate(question: str, hits: list[Hit], case: Case | None = None) -> SUTOut
         from . import mock
         return mock.generate(question, hits, case, config.flavor(), config.seed(),
                              config.regression_rate())
+    if config.gen_provider() == "openai":
+        from . import openai_gen
+        return openai_gen.generate(question, hits, case)
     from . import real
     return real.generate(question, hits, case)

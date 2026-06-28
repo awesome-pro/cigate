@@ -1,0 +1,40 @@
+# Small, cost-bounded config for the REAL cross-provider eval (GPT product, Claude judge).
+# Tiny golden + calibration subsets keep a full real run in the ~$2-5 range.
+# Generator provider is set via env (REFBOT_GEN_PROVIDER=openai) in scripts/real_eval.sh.
+
+sut: "refbot.pipeline:rag_answer"
+goldenset: "goldensets/realdemo_golden.yaml"
+calibration_set: "goldensets/realdemo_calibration.yaml"
+corpus: "goldensets/corpus"
+
+axes: [hallucination, retrieval_miss, citation_error, refusal, format_violation]
+
+sampling:
+  fraction: 1.0            # small golden (40) — evaluate all of it
+  stratify: true
+  min_per_axis: 1
+  seed: 7
+
+gate:
+  tolerance: 0.02
+  confidence_level: 0.95
+  multiple_comparison: bonferroni
+  min_calibration_per_class: 10
+
+budget:
+  max_usd_per_run: 5
+  monthly_ceiling_usd: 50
+
+judge:
+  model: claude-sonnet-4-6
+  confusion:                # used only if it ever falls back to mock; ignored in real mode
+    hallucination: [0.92, 0.88]
+    retrieval_miss: [0.92, 0.88]
+    citation_error: [0.95, 0.93]
+    refusal: [0.91, 0.92]
+    format_violation: [0.99, 0.99]
+
+generator:
+  model: claude-opus-4-8    # cost fallback only; real model comes from REFBOT_GEN_MODEL
+
+baseline_path: ".cigate/baseline_realdemo.json"
