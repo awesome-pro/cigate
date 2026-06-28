@@ -1,0 +1,10 @@
+---
+id: health-premium-001
+title: Health Insurance — Premium and Payment Schedule
+---
+
+This section explains the monthly premium payment for your health insurance policy, including billing amounts, due dates, and late-payment handling.
+
+Your monthly premium payment is $29 per month, or $348 billed annually. Payment for your health policy is due on the first of each billing cycle.
+
+A late fee of $15 applies if the monthly premium payment is not received within 30 days of the due date. Continued non-payment of the health premium may lead to lapse of coverage.
