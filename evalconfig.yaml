@@ -25,7 +25,7 @@ budget:
   monthly_ceiling_usd: 5000
 
 judge:
-  model: claude-sonnet-4-6
+  model: claude-sonnet-5
   # Per-axis mock confusion matrix (sensitivity, specificity) — used only in mock mode
   # so the statistical-correction layer has real, known bias to correct.
   confusion:

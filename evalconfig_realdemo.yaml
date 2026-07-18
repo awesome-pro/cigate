@@ -26,7 +26,7 @@ budget:
   monthly_ceiling_usd: 50
 
 judge:
-  model: claude-sonnet-4-6
+  model: claude-sonnet-5
   confusion:                # used only if it ever falls back to mock; ignored in real mode
     hallucination: [0.92, 0.88]
     retrieval_miss: [0.92, 0.88]

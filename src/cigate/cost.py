@@ -10,7 +10,7 @@ from __future__ import annotations
 # USD per 1M tokens (input, output). Approximate 2026 list prices; configurable.
 PRICING: dict[str, tuple[float, float]] = {
     "claude-opus-4-8": (5.0, 25.0),
-    "claude-sonnet-4-6": (3.0, 15.0),
+    "claude-sonnet-5": (3.0, 15.0),
     "claude-haiku-4-5": (1.0, 5.0),
     # OpenAI (for the cross-provider product-under-test)
     "gpt-4o-mini": (0.15, 0.60),

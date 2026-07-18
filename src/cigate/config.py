@@ -40,7 +40,7 @@ class BudgetConfig(BaseModel):
 
 
 class JudgeConfig(BaseModel):
-    model: str = "claude-sonnet-4-6"
+    model: str = "claude-sonnet-5"
     # per-axis mock confusion matrix (sensitivity, specificity); used only in mock mode.
     confusion: dict[str, tuple[float, float]] = Field(
         default_factory=lambda: {

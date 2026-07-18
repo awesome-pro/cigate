@@ -45,4 +45,4 @@ REFBOT_PROMPT=answer_v1 cigate gate --config evalconfig_realdemo.yaml \
   --out-summary docs/results/real_good_summary.json
 
 echo ""
-echo "Done. Real results in docs/results/ (model: $REFBOT_GEN_MODEL product, claude-sonnet-4-6 judge)."
+echo "Done. Real results in docs/results/ (model: $REFBOT_GEN_MODEL product, claude-sonnet-5 judge)."
