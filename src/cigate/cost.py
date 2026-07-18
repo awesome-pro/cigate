@@ -17,6 +17,10 @@ PRICING: dict[str, tuple[float, float]] = {
     "gpt-4o": (2.5, 10.0),
     "gpt-4.1-mini": (0.40, 1.60),
     "gpt-4.1": (2.0, 8.0),
+    # GPT-5.6 family (July 2026 list prices): Sol $5 / Terra $2.50 / Luna $1 input.
+    "gpt-5.6-terra": (2.5, 15.0),
+    "gpt-5.6-sol": (5.0, 30.0),
+    "gpt-5.6-luna": (1.0, 5.0),
 }
 _DEFAULT_PRICE = (3.0, 15.0)
 
