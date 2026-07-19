@@ -68,6 +68,16 @@ class ClaudeJudge:
         self.model = model
         self.prompt = judge_prompt
         self.axes = axes
+        self._client = None
+
+    def _get_client(self):
+        # One client shared across threads (httpx is thread-safe for concurrent
+        # requests) — avoids rebuilding a connection pool on every judged case.
+        if self._client is None:
+            import anthropic
+
+            self._client = anthropic.Anthropic()
+        return self._client
 
     def _tool_schema(self) -> dict:
         props = {a: {"type": "boolean"} for a in self.axes}
@@ -83,9 +93,7 @@ class ClaudeJudge:
         }
 
     def judge(self, case: Case, output: SUTOutput, context: str = "") -> JudgeResult:
-        import anthropic
-
-        client = anthropic.Anthropic()
+        client = self._get_client()
         rubric = "\n".join(
             f"- {a}: {self.prompt['axis_rubric'][a]}" for a in self.axes
         )

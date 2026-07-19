@@ -19,6 +19,7 @@ from .config import load_config
 from .evaluators import code_based
 from .evaluators.judge import make_judge
 from .goldenset import load_calibration
+from .parallel import map_progress
 from .runner import _context, _detector
 from .sut import load_object
 from .taxonomy import AXIS_BY_KEY
@@ -58,10 +59,20 @@ def calibrate(cfg, perturb_judge: bool = False) -> dict:
 
     preds = {a: [] for a in judge_axes}
     truth = {a: [] for a in judge_axes}
-    for case, output in load_calibration(cfg.calibration_set):
+
+    def _score(item):
+        case, output = item
         ctx = _context(corpus, output.retrieved_ids)
         code = code_based.code_verdicts(output, case, valid_ids)
         jr = judge.judge(case, output, ctx)
+        return case, code, jr
+
+    items = list(load_calibration(cfg.calibration_set))
+    desc = "mock calibration" if mock else "judge vs expert labels"
+    for res in map_progress(_score, items, desc=desc):
+        if res is None:
+            continue
+        case, code, jr = res
         for a in judge_axes:
             if a in case.truth_labels:
                 preds[a].append(int(_detector(a, code, jr.verdicts)))

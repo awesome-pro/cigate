@@ -20,6 +20,7 @@ from .config import Config
 from .evaluators import code_based
 from .evaluators.judge import make_judge
 from .goldenset import load_calibration, load_golden, stratified_sample
+from .parallel import map_progress
 from .sut import load_object, load_sut
 from .taxonomy import AXIS_BY_KEY
 from .types import SUTOutput
@@ -104,13 +105,19 @@ def run(cfg: Config, fraction: float | None = None, seed: int | None = None) -> 
     for a in axes:
         result.eval_preds[a] = []
 
-    prompt_version = "?"
-    for case in sample:
+    def _score_case(case):
         output: SUTOutput = sut(case.question, corpus_dir=cfg.corpus, case=case)
-        prompt_version = output.prompt_version
         ctx = _context(corpus, output.retrieved_ids)
         code = code_based.code_verdicts(output, case, valid_ids)
         jr = judge.judge(case, output, ctx)
+        return case, output, code, jr
+
+    prompt_version = "?"
+    for res in map_progress(_score_case, sample, desc="scoring answers"):
+        if res is None:
+            continue
+        case, output, code, jr = res
+        prompt_version = output.prompt_version
 
         gen_model = output.meta.get("model", cfg.generator.model)
         gen_tokens = output.meta.get("input_tokens", 0), output.meta.get("output_tokens", 0)
@@ -141,10 +148,19 @@ def run(cfg: Config, fraction: float | None = None, seed: int | None = None) -> 
     else:
         for a in axes:
             result.calib_preds[a], result.calib_truth[a] = [], []
-        for case, output in load_calibration(cfg.calibration_set):
+
+        def _score_calib(item):
+            case, output = item
             ctx = _context(corpus, output.retrieved_ids)
             code = code_based.code_verdicts(output, case, valid_ids)
             jr = judge.judge(case, output, ctx)
+            return case, code, jr
+
+        calib_items = list(load_calibration(cfg.calibration_set))
+        for res in map_progress(_score_calib, calib_items, desc="calibrating judge"):
+            if res is None:
+                continue
+            case, code, jr = res
             result.cost_usd += jr.cost_usd
             budget.add(jr.cost_usd)
             for a in axes:
