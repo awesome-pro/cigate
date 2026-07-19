@@ -122,20 +122,29 @@ what powers the test suite and the demo CI.
 git clone https://github.com/awesome-pro/cigate && cd cigate
 pip install -e ".[dev]"
 
+bash scripts/try_local.sh                 # one command: blocks a bad build, passes a good one
+```
+
+Or run the steps yourself:
+
+```bash
 cigate baseline --promote                 # establish a 'good' baseline (full run)
 BUILD_FLAVOR=regressed cigate gate        # → blocks: hallucination + citation_error red
 BUILD_FLAVOR=good      cigate gate        # → passes: all axes within tolerance
-pytest -q                                 # 26 tests, all green, $0
+pytest -q                                 # 28 tests, all green, $0
 ```
 
-Want the real thing? Set `ANTHROPIC_API_KEY` and install the extra — the *same* pipeline
-now uses Claude as generator and judge:
+Want the real thing? CIGate runs **cross-provider** so no model grades its own output —
+the product runs on OpenAI, the judge is Claude:
 
 ```bash
-pip install -e ".[real]"
-export ANTHROPIC_API_KEY=sk-...
-cigate gate                               # real Claude answers, scored + corrected
+cp .env.example .env                      # add OPENAI_API_KEY + ANTHROPIC_API_KEY
+bash scripts/real_eval.sh                 # ~2 min, live progress → docs/results/
 ```
+
+**→ See [`docs/RESULTS.md`](docs/RESULTS.md) for a real run:** the Claude judge calibrated
+against 166 CUAD expert labels, a real GPT regression **blocked** for **$0.39** (citation
+pass-rate collapsed 0.94 → 0.24 corrected), a safe change passed for $0.32.
 
 ## Two datasets: synthetic + real
 

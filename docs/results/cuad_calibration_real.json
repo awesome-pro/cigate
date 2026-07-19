@@ -1,0 +1,50 @@
+{
+  "mock": false,
+  "perturbed": false,
+  "axes": {
+    "format_violation": {
+      "deterministic": true,
+      "note": "code axis; no calibration needed"
+    },
+    "hallucination": {
+      "n": 166,
+      "m_pos": 118,
+      "m_neg": 48,
+      "tpr": 0.822,
+      "tnr": 1.0,
+      "accuracy": 0.8735,
+      "kappa": 0.7276,
+      "drift_flag": false
+    },
+    "retrieval_miss": {
+      "n": 166,
+      "m_pos": 94,
+      "m_neg": 72,
+      "tpr": 0.0213,
+      "tnr": 0.6667,
+      "accuracy": 0.3012,
+      "kappa": -0.281,
+      "drift_flag": true
+    },
+    "citation_error": {
+      "n": 166,
+      "m_pos": 92,
+      "m_neg": 74,
+      "tpr": 0.6957,
+      "tnr": 1.0,
+      "accuracy": 0.8313,
+      "kappa": 0.6708,
+      "drift_flag": true
+    },
+    "refusal": {
+      "n": 166,
+      "m_pos": 120,
+      "m_neg": 46,
+      "tpr": 0.575,
+      "tnr": 1.0,
+      "accuracy": 0.6928,
+      "kappa": 0.4285,
+      "drift_flag": true
+    }
+  }
+}
